@@ -2,10 +2,12 @@
 {% load static %}
 {% block content %}
     <div class="row">
-        <div class="col-12 col-md-3 pr-4 dont-move">
-            <a href="/"> <h2 class="white-important">OfficeRoom</h2></a><br>
+        <div class="col-12 col-md-3 pr-4 dont-move container justify-content-center">
+            <div class="text-center">
+            <h2 class="white-important">OfficeRoom</h2><br>
+            </div>
             <div class="profile-section">
-            <h3 class="white-important p-2">
+            <h3 class="white-important p-2 pl-3">
                 Profile
             </h3>
             <article class="media content-section" style="height: 140px; width: 100%">
@@ -224,16 +226,15 @@
                 {% endif %}
             </div>
         </div>
-        <div class="col-12 col-md-3 dont-move">
-            <form action="{% url 'search' %}" method="post">{% csrf_token %}
-                <div class="search-container">
+        <div class="col-12 col-md-3">
+            <form class ="pb-4" action="{% url 'search' %}" method="post">{% csrf_token %}
+                <div class="search-container container align-content-center flex-row">
                     <div class="search">
                     <input required name="search" type="text" id="zip-code-input" placeholder="Search People">
                     <button type="submit" style="border:0; background: transparent;"><i class="fa fa-search"></i> </button> </a>
                 </form>
               </div>
             </div>
-            <h3 class="white-important mb-3 mt-4"> Your team </h3>
 
                 {%  if user_profile is None %}
 
@@ -241,7 +242,7 @@
 
                     <div class="row ">
                         <div class="col-12">
-                            <h3>Checked in Tomorrow</h3>
+                            <h3 class="white-important p-2 pl-3">Checked in Tomorrow</h3>
                         </div>
                         <ul class="col-12 mt-2">
                             {% for user in all_users %}

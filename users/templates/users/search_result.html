@@ -2,7 +2,7 @@
 
 {% block content %}
 
-	<div class="container d-flex align-content-center">
+	<div class="container flex-row align-content-center" style="max-width: 800px">
 		<div class="form-group">
 				<form action="{% url 'search' %}" method="post">{% csrf_token %}
                 <div style="width: 100%" class="search-container">
@@ -15,7 +15,7 @@
                 <br>
 		{% if results %}
 			{% for result in results %}
-			<div class="search-result-profile">
+			<div class="search-result-profile w-75 ml-auto mr-auto">
 										<div
                                                style="padding-left: 0px !important;"
                                                class="col-8 no-padding d-flex align-items-center">
