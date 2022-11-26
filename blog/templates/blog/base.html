@@ -20,15 +20,13 @@
               class="navbar navbar-expand navbar-dark bg-steel">
         <div class="container">
           <div class="collapse navbar-collapse" id="navbarToggle">
-            <div class="navbar-nav mr-auto pl-2">
+            <div class="navbar-nav mr-auto pl-2 ml-2">
               <a class="nav-item nav-link" href="{% url 'blog-home' %}">Home</a>
             </div>
-                        <div class="navbar-nav pr-2">
+            <div class="navbar-nav pr-2 mr-2">
                 {% if user.is_authenticated %}
                     <a class="nav-item nav-link" href="{% url 'profile' %}">Settings</a>
                     <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
-                {% else %}
-                    <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
                 {% endif %}
             </div>
           </div>

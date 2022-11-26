@@ -3,7 +3,7 @@
 {% block content %}
     <div class="row">
         <div class="col-12 col-md-3 pr-4 dont-move">
-            <a href="/"> <h2>OfficeRoom</h2></a><br>
+            <a href="/"> <h2 class="white-important">OfficeRoom</h2></a><br>
             <div class="profile-section">
             <h3 class="white-important p-2">
                 Profile
@@ -95,10 +95,10 @@
 
             <div class="d-flex" style="justify-content: center;">
                 <div style="margin-left: auto; margin-right:auto">
-                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 " href="{% url 'isChecked' %}">
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pl-4 pr-4" href="{% url 'isChecked' %}">
                         Check in tomorrow
                     </a>
-                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 " href="{% url 'post-create' %}">
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pl-4 pr-4" href="{% url 'post-create' %}">
                         Create new event
                     </a>
                 </div>
@@ -228,7 +228,7 @@
             <form action="{% url 'search' %}" method="post">{% csrf_token %}
                 <div class="search-container">
                     <div class="search">
-                    <input required name="search" type="text" id="zip-code-input" placeholder="Search Twitter">
+                    <input required name="search" type="text" id="zip-code-input" placeholder="Search People">
                     <button type="submit" style="border:0; background: transparent;"><i class="fa fa-search"></i> </button> </a>
                 </form>
               </div>
