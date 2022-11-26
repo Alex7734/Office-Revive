@@ -28,3 +28,5 @@ sizeEntry = Scale(UI_frame, from_=25, to=100, resolution=3, orient=HORIZONTAL, l
 sizeEntry.grid(row=1, column=1, padx=5, pady=5)
 
 root.mainloop()
+
+#testeaza aici
