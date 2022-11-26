@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
-
+from users.models import Profile, Interests
 
 
 class Post(models.Model):
@@ -11,9 +11,14 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
+    interest = models.OneToOneField(Interests, on_delete=models.CASCADE, null=True, blank=True)
+    participants = models.ManyToManyField(Profile, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Posts"
 
     def __str__(self):
-        return self.content[:5]
+        return self.content[:20] + "..."
 
     @property
     def number_of_comments(self):
@@ -25,6 +30,9 @@ class Comment(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     post_connected = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.author) + " " + str(self.content)
 
 
 class Preference(models.Model):

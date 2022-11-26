@@ -3,7 +3,7 @@
 {% block content %}
     <div class="row">
         <div class="col-12 col-md-3 pr-4 dont-move">
-            <a href="/"> <h2 class="white-important">OfficeRoom</h2></a><br>
+            <a href="/"> <h2>OfficeRoom</h2></a><br>
             <div class="profile-section">
             <h3 class="white-important p-2">
                 Profile
@@ -42,9 +42,12 @@
                                     class="email-profile">
                                 {{ user.email }}
                             </h6>
-                            <h6 style="text-align: left"
-                                    class="email-profile">
-                                {{ userProfile.isChecked }}
+                            <h6 style="text-align: left" class="email-profile">
+                                {%  if userProfile.isChecked %}
+                                Checked in for work tomorrow
+                                {% else %}
+                                Will not be at work tomorrow
+                                {% endif %}
                             </h6>
                         </div>
                     </div>
@@ -93,12 +96,19 @@
                 </div>
             </article>
 
+                        
+
+
             <div class="d-flex" style="justify-content: center;">
                 <div style="margin-left: auto; margin-right:auto">
-                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pl-4 pr-4" href="{% url 'isChecked' %}">
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 "onClick="document.getElementById('checkin').submit()">
                         Check in tomorrow
                     </a>
-                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pl-4 pr-4" href="{% url 'post-create' %}">
+                                    <form id="checkin" method="POST" action="{% url 'isChecked' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden">
+                                    </form>
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 " href="{% url 'post-create' %}">
                         Create new event
                     </a>
                 </div>
@@ -228,7 +238,7 @@
             <form action="{% url 'search' %}" method="post">{% csrf_token %}
                 <div class="search-container">
                     <div class="search">
-                    <input required name="search" type="text" id="zip-code-input" placeholder="Search People">
+                    <input required name="search" type="text" id="zip-code-input" placeholder="Search Twitter">
                     <button type="submit" style="border:0; background: transparent;"><i class="fa fa-search"></i> </button> </a>
                 </form>
               </div>

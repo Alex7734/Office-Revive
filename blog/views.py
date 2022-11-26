@@ -245,6 +245,7 @@ def isChecked(request):
     if request.method == "POST":
         userProfile = Profile.objects.get(user=request.user) 
         userProfile.isChecked = not (userProfile.isChecked)
+        userProfile.save()
         print('ajung')
     return redirect('blog-home')
 
