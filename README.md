@@ -20,3 +20,5 @@ python main.py
 
 [This website teaches you how to do it all](https://www.datacamp.com/tutorial/git-push-pull) <br>
 [Or you can watch these videos for more info](https://www.youtube.com/watch?v=HVsySz-h9r4&list=PL-osiE80TeTuRUfjRe54Eea17-YfnOOAx)
+
+dummy data deleted - starting hackaton
