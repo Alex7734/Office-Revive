@@ -15,7 +15,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import api_view
 from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser 
+from rest_framework.parsers import JSONParser
 from rest_framework import status
 
 
@@ -33,14 +33,13 @@ class PostListView(LoginRequiredMixin, ListView):
     ordering = ['-date_posted']
     paginate_by = PAGINATION_COUNT
 
-
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
 
         all_users = Profile.objects.all()
         checked_in_users = Profile.objects.filter(isChecked=True)
 
-        data['userProfile'] = Profile.objects.get(user=self.request.user) 
+        data['userProfile'] = Profile.objects.get(user=self.request.user)
         data['all_users'] = all_users
         data['checked_in_users'] = checked_in_users
         return data
@@ -58,7 +57,6 @@ class UserPostListView(LoginRequiredMixin, ListView):
     def visible_user(self):
         return get_object_or_404(User, username=self.kwargs.get('username'))
 
-
     def get_queryset(self):
         user = self.visible_user()
         return Post.objects.filter(author=user).order_by('-date_posted')
@@ -74,7 +72,7 @@ class PostDetailView(DetailView):
         comments_connected = Comment.objects.filter(post_connected=self.get_object()).order_by('-date_posted')
         data['comments'] = comments_connected
         data['form'] = NewCommentForm(instance=self.request.user)
-        #data['comming'] = Preference.objects.filter(post = self.get_object())
+        # data['comming'] = Preference.objects.filter(post = self.get_object())
         return data
 
     def post(self, request, *args, **kwargs):
@@ -134,7 +132,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 @login_required
 def isChecked(request):
     if request.method == "POST":
-        userProfile = Profile.objects.get(user=request.user) 
+        userProfile = Profile.objects.get(user=request.user)
         userProfile.isChecked = not (userProfile.isChecked)
         userProfile.save()
         if userProfile.isChecked:
@@ -142,6 +140,7 @@ def isChecked(request):
         else:
             messages.success(request, f'Checked out of work!')
     return redirect('blog-home')
+
 
 @login_required
 def appendToEvent(request, pk):
@@ -151,13 +150,12 @@ def appendToEvent(request, pk):
         profile = Profile.objects.get(user=request.user)
         if not (profile in post.participants.all()):
             post.participants.add(profile)
-            messages.success(request,f"adding {profile} to {post} {pk}")
+            messages.success(request, f"adding {profile} to {post} {pk}")
         else:
             post.participants.remove(profile)
-            messages.success(request,f"removing {profile} to {post} {pk}")
+            messages.success(request, f"removing {profile} to {post} {pk}")
         post.save()
     return redirect('blog-home')
-
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -178,29 +176,28 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-
 @api_view(['GET', 'POST', 'DELETE'])
 def post_list(request):
     if request.method == 'GET':
         posts = Post.objects.all()
-        
+
         title = request.query_params.get('title', None)
         if title is not None:
             posts = posts.filter(title__icontains=title)
-        
+
         posts_serializer = PostSerializer(posts, many=True)
         return JsonResponse(posts_serializer.data, safe=False)
         # 'safe=False' for objects serialization
- 
+
     elif request.method == 'POST':
         post_data = JSONParser().parse(request)
         post_serializer = PostSerializer(data=post_data)
         if post_serializer.is_valid():
             post_serializer.save()
-            return JsonResponse(post_serializer.data, status=status.HTTP_201_CREATED) 
+            return JsonResponse(post_serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     elif request.method == 'DELETE':
         count = Post.objects.all().delete()
-        return JsonResponse({'message': '{} Posts were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
- 
+        return JsonResponse({'message': '{} Posts were deleted successfully!'.format(count[0])},
+                            status=status.HTTP_204_NO_CONTENT)
