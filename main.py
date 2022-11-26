@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import ttk
 from sorts import Sort
 
+cristi = 'fericit'
+
 def Start():
     size = sizeEntry.get()
     method = selected_algorithm.get()
