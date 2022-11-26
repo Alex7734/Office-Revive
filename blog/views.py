@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from blog.models import Post, Comment, Preference
+from blog.models import Post, Comment
 from users.models import Profile
 import sys
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -36,21 +37,16 @@ class PostListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
 
-        all_users = []
-        data_counter = Post.objects.values('author')\
-            .annotate(author_count=Count('author'))\
-            .order_by('-author_count')[:6]
-
-        for aux in data_counter:
-            all_users.append(User.objects.filter(pk=aux['author']).first())
+        all_users = Profile.objects.all()
+        checked_in_users = Profile.objects.filter(isChecked=True)
 
         data['userProfile'] = Profile.objects.get(user=self.request.user) 
-        data['preference'] = Preference.objects.filter(user=self.request.user)
         data['all_users'] = all_users
+        data['checked_in_users'] = checked_in_users
         return data
 
     def get_queryset(self):
-        return Post.objects.all().order_by('-date_posted')
+        return Post.objects.all().order_by('date_posted')
 
 
 class UserPostListView(LoginRequiredMixin, ListView):
@@ -78,6 +74,7 @@ class PostDetailView(DetailView):
         comments_connected = Comment.objects.filter(post_connected=self.get_object()).order_by('-date_posted')
         data['comments'] = comments_connected
         data['form'] = NewCommentForm(instance=self.request.user)
+        #data['comming'] = Preference.objects.filter(post = self.get_object())
         return data
 
     def post(self, request, *args, **kwargs):
@@ -101,7 +98,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['content']
+    fields = ['content', 'date_posted', 'score']
     template_name = 'blog/post_new.html'
     success_url = '/'
 
@@ -111,7 +108,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        data['tag_line'] = 'Add a new post'
+        data['tag_line'] = 'Add an event'
         return data
 
 
@@ -134,119 +131,33 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return data
 
 
-
-# Like Functionality====================================================================================
-
-@login_required
-def postpreference(request, postid, userpreference):
-        
-        if request.method == "POST":
-                eachpost= get_object_or_404(Post, id=postid)
-
-                obj=''
-
-                valueobj=''
-
-                try:
-                        obj= Preference.objects.get(user= request.user, post= eachpost)
-
-                        valueobj= obj.value #value of userpreference
-
-
-                        valueobj= int(valueobj)
-
-                        userpreference= int(userpreference)
-                
-                        if valueobj != userpreference:
-                                obj.delete()
-
-
-                                upref= Preference()
-                                upref.user= request.user
-
-                                upref.post= eachpost
-
-                                upref.value= userpreference
-
-
-                                if userpreference == 1 and valueobj != 1:
-                                        eachpost.likes += 1
-                                        eachpost.dislikes -=1
-                                elif userpreference == 2 and valueobj != 2:
-                                        eachpost.dislikes += 1
-                                        eachpost.likes -= 1
-                                
-
-                                upref.save()
-
-                                eachpost.save()
-                        
-                        
-                                context= {'eachpost': eachpost,
-                                  'postid': postid}
-
-                                return redirect('blog-home')
-
-                        elif valueobj == userpreference:
-                                obj.delete()
-                        
-                                if userpreference == 1:
-                                        eachpost.likes -= 1
-                                elif userpreference == 2:
-                                        eachpost.dislikes -= 1
-
-                                eachpost.save()
-
-                                context= {'eachpost': eachpost,
-                                  'postid': postid}
-
-                                return redirect('blog-home')
-                                
-                        
-        
-                
-                except Preference.DoesNotExist:
-                        upref= Preference()
-
-                        upref.user= request.user
-
-                        upref.post= eachpost
-
-                        upref.value= userpreference
-
-                        userpreference= int(userpreference)
-
-                        if userpreference == 1:
-                                eachpost.likes += 1
-                        elif userpreference == 2:
-                                eachpost.dislikes +=1
-
-                        upref.save()
-
-                        eachpost.save()                            
-
-
-                        context= {'eachpost': eachpost,
-                          'postid': postid}
-
-                        return redirect('blog-home')
-
-
-        else:
-                eachpost= get_object_or_404(Post, id=postid)
-                context= {'eachpost': eachpost,
-                          'postid': postid}
-
-                return redirect('blog-home')
-
-
 @login_required
 def isChecked(request):
     if request.method == "POST":
         userProfile = Profile.objects.get(user=request.user) 
         userProfile.isChecked = not (userProfile.isChecked)
-        print('ajung')
+        userProfile.save()
+        if userProfile.isChecked:
+            messages.success(request, f'Checked in for work!')
+        else:
+            messages.success(request, f'Checked out of work!')
     return redirect('blog-home')
+
+@login_required
+def appendToEvent(request, pk):
+    if request.method == "POST":
+        print(pk)
+        post = Post.objects.get(id=pk)
+        profile = Profile.objects.get(user=request.user)
+        if not (profile in post.participants.all()):
+            post.participants.add(profile)
+            messages.success(request,f"adding {profile} to {post} {pk}")
+        else:
+            post.participants.remove(profile)
+            messages.success(request,f"removing {profile} to {post} {pk}")
+        post.save()
+    return redirect('blog-home')
+
 
 
 class UserViewSet(viewsets.ModelViewSet):

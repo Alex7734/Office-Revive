@@ -2,18 +2,24 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
-
+from users.models import Profile, Interests
 
 
 class Post(models.Model):
     content = models.TextField(max_length=1000)
-    date_posted = models.DateTimeField(default=timezone.now)
+    date_posted = models.DateTimeField(default=timezone.now())
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
+    interest = models.OneToOneField(Interests, on_delete=models.CASCADE, null=True, blank=True)
+    participants = models.ManyToManyField(Profile, blank=True)
+    score = models.IntegerField(null=False, blank=False, default=10)
+
+    class Meta:
+        verbose_name_plural = "Posts"
 
     def __str__(self):
-        return self.content[:5]
+        return self.content[:20] + "..."
 
     @property
     def number_of_comments(self):
@@ -26,15 +32,6 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     post_connected = models.ForeignKey(Post, on_delete=models.CASCADE)
 
-
-class Preference(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    value = models.IntegerField()
-    date = models.DateTimeField(auto_now= True)
-
     def __str__(self):
-        return str(self.user) + ':' + str(self.post) +':' + str(self.value)
+        return str(self.author) + " " + str(self.content)
 
-    class Meta:
-       unique_together = ("user", "post", "value")

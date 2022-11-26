@@ -31,14 +31,29 @@
                     {%  endif %}
                </div>
            </div>
+
             <div
                     class="mb-2 "
                     style="width: 100%; height: 1px; background-color: rgba(255, 255, 255, 0.1)"></div>
             <a style="color: rgba(255, 255, 255, 0.5) !important;">
                 <p>
+
                     {{ post.content }}
                 </p>
-
+                <p style="margin-bottom: -4px;">Comming:</p>
+              {% for user in comming %}
+               <div
+                       style="padding-left: 0px !important;"
+                       class="col-8 no-padding d-flex align-items-center">
+                   <img
+                       class="rounded-circle mr-2"
+                       style="width: 20px; height: 20px;"
+                       src="{{ user.user.profile.image.url }}">
+                   <a class="mr-2 white-important" href="{% url 'user-posts' user.user %}">
+                       {{ user.user }}
+                   </a>
+               </div>
+              {% endfor %}
                 <small
                     class="white-important d-flex full-width flex-row-reverse">
                     {{ post.date_posted | date:"H:i l, d.m.y" }}

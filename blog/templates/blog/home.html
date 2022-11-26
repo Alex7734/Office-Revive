@@ -6,8 +6,9 @@
             <div class="text-center">
             <h2 class="white-important">OfficeRoom</h2><br>
             </div>
+            <br>
             <div class="profile-section">
-            <h3 class="white-important p-2 pl-3">
+            <h3 class="white-important p-2">
                 Profile
             </h3>
             <article class="media content-section" style="height: 140px; width: 100%">
@@ -44,9 +45,12 @@
                                     class="email-profile">
                                 {{ user.email }}
                             </h6>
-                            <h6 style="text-align: left"
-                                    class="email-profile">
-                                {{ userProfile.isChecked }}
+                            <h6 style="text-align: left" class="email-profile">
+                                {%  if userProfile.isChecked %}
+                                Checked in for work tomorrow
+                                {% else %}
+                                Will not be at work tomorrow
+                                {% endif %}
                             </h6>
                         </div>
                     </div>
@@ -95,14 +99,23 @@
                 </div>
             </article>
 
+                        
+
+
             <div class="d-flex" style="justify-content: center;">
                 <div style="margin-left: auto; margin-right:auto">
-                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pl-4 pr-4" href="{% url 'isChecked' %}">
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pr-4 pl-4"onClick="document.getElementById('checkin').submit()">
                         Check in tomorrow
                     </a>
-                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pl-4 pr-4" href="{% url 'post-create' %}">
+                                    <form id="checkin" method="POST" action="{% url 'isChecked' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden">
+                                    </form>
+                    {% if request.user.is_superuser %}
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pr-4 pl-4" href="{% url 'post-create' %}">
                         Create new event
                     </a>
+                    {% endif %}
                 </div>
             </div>
             </div>
@@ -167,11 +180,10 @@
                             <div class="col-6" style="display: flex;">
                                 <small style="opacity: 0.4;">
 
-                                    <!-- Like Buttons Here -->
-                                    <a href="#" onClick="document.getElementById('likebutton').submit()"><i class="fas fa-thumbs-up"></i> Comming ({{post.likes}}) </a>
+                                    <a href="#" onClick="document.getElementById('likebutton-{{post.id}}').submit()"><i class="fas fa-thumbs-up"></i> Comming ({{post.participants.count }}) </a>
                         
 
-                                    <form id="likebutton" method="POST" action="{% url 'postpreference' post.id 1 %}">
+                                    <form id="likebutton-{{post.id}}" method="POST" action="{% url 'appendToEvent' post.id %}">
                                     {% csrf_token %}
                                     <input type="hidden">
                                     </form>
@@ -226,6 +238,7 @@
                 {% endif %}
             </div>
         </div>
+
         <div class="col-12 col-md-3">
             <form class ="pb-4" action="{% url 'search' %}" method="post">{% csrf_token %}
                 <div class="search-container container align-content-center flex-row">
@@ -242,10 +255,10 @@
 
                     <div class="row ">
                         <div class="col-12">
-                            <h3 class="white-important p-2 pl-3">Checked in Tomorrow</h3>
+                            <h3 class="white-important p-2 pl-3">Checked in for tomorrow</h3>
                         </div>
                         <ul class="col-12 mt-2">
-                            {% for user in all_users %}
+                            {% for user in checked_in_users %}
                                 <li>
                                     <div class="who-to-follow">
 
@@ -255,12 +268,12 @@
                                            <img
                                                class="rounded-circle mr-2"
                                                style="width: 20px; height: 20px;"
-                                               src="{{ user.profile.image.url }}">
-                                           <a class="mr-2 white-important" href="{% url 'user-posts' user.username %}">
-                                               {{ user.username }}
+                                               src="{{ user.image.url }}">
+                                           <a class="mr-2 white-important" href="">
+                                               {{ user.user.username }}
                                            </a>
                                        </div>
-                                        <p>{{ user.email }}</p>
+                                        <p>{{ user.user.email }}</p>
                                     </div>
                                 </li>
                             {% endfor %}
