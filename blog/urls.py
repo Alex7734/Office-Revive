@@ -6,9 +6,9 @@ from .views import (
     PostUpdateView,
     PostDeleteView,
     UserPostListView,
-    postpreference,
     post_list,
-    isChecked)
+    isChecked,
+    appendToEvent)
 from .import views
 from django.urls import include
 from rest_framework import routers
@@ -25,9 +25,10 @@ urlpatterns = [
     path('user/<str:username>', UserPostListView.as_view(), name='user-posts'),
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/del/', PostDeleteView.as_view(), name='post-delete'),
-    path('post/<int:postid>/preference/<int:userpreference>', postpreference, name='postpreference'),
     path('l/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/posts', post_list),
-    path('isChecked', isChecked, name="isChecked")
+    path('isChecked', isChecked, name="isChecked"),
+    path('appendToEvent/<int:pk>/', appendToEvent, name="appendToEvent")
+
 ]
