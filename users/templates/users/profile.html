@@ -9,10 +9,6 @@
         {% csrf_token %}
         <fieldset class="form-group">
             {{ uform | crispy }}
-
-            <label class="titlu">Hobbies</label>
-            <input class="hobby form-control" type="text"/>
-
             {{ pform | crispy }}
         </fieldset>
         <div class="form-group">

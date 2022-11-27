@@ -20,7 +20,6 @@ def register(request):
     else:
         return redirect('blog-home')
 
-
 @login_required
 def profile(request):
     if request.method == 'POST':
@@ -39,6 +38,7 @@ def profile(request):
     return render(request, 'users/profile.html', {'uform': uform, 'pform': pform})
 
 
+
 @login_required
 def SearchView(request):
     if request.method == 'POST':
@@ -46,6 +46,6 @@ def SearchView(request):
         print(kerko)
         results = User.objects.filter(username__contains=kerko)
         context = {
-            'results': results
+            'results':results
         }
         return render(request, 'users/search_result.html', context)
