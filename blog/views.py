@@ -74,7 +74,8 @@ class PostDetailView(DetailView):
         comments_connected = Comment.objects.filter(post_connected=self.get_object()).order_by('-date_posted')
         data['comments'] = comments_connected
         data['form'] = NewCommentForm(instance=self.request.user)
-        # data['comming'] = Preference.objects.filter(post = self.get_object())
+        #profile in post.participants.all()
+
         return data
 
     def post(self, request, *args, **kwargs):
