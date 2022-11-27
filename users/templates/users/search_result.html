@@ -1,0 +1,40 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+
+	<div class="container flex-row align-content-center" style="max-width: 800px">
+		<div class="form-group">
+				<form action="{% url 'search' %}" method="post">{% csrf_token %}
+                <div style="width: 100%" class="search-container">
+                    <div class="search">
+                    <input required name="search" type="text" id="zip-code-input" placeholder="Search new friends">
+                    <button type="submit" style="border:0; background: transparent;"><i class="fa fa-search"></i> </button> </a>
+                </div>
+                </form>
+            </div>
+                <br>
+		{% if results %}
+			{% for result in results %}
+			<div class="search-result-profile w-75 ml-auto mr-auto">
+										<div
+                                               style="padding-left: 0px !important;"
+                                               class="col-8 no-padding d-flex align-items-center">
+                                           <img
+                                               class="rounded-circle mr-2"
+                                               style="width: 40px; height: 40px;"
+                                               src="{{ result.profile.image.url }}">
+                                           <a class="mr-2 white-important" href="{% url 'user-detail' result.id %}">
+                                               {{ result.username }}
+                                           </a>
+                                       </div>
+				                    
+				                </div>
+			{% endfor %}
+		{% else %}
+			<div class="alert alert-info" role="alert">
+			  No result, please try to search again!
+			</div>
+		{% endif %}
+	</div>
+
+{% endblock %}
