@@ -1,0 +1,21 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+       <div class="container pb-4">
+        <h3 class="white-important text-center">
+            {{  tag_line }}
+        </h3>
+    </div>
+
+    <form method="POST" class="col-12 col-md-6 no-padding pr-3 pr-md-0 container flex-row align-content-center">
+        {% csrf_token %}
+        <fieldset class="form-group  pb-3">
+            {{ form | crispy }}
+        </fieldset>
+        <div class="form-group container align-content-center flex-row">
+            <button class="btn btn-outline-primary full-width" type="submit">Submit changes</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}
