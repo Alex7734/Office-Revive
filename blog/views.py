@@ -250,6 +250,10 @@ def appendToEvent(request, pk):
     return redirect('blog-home')
 
 
+def sendInvite(email, name):
+    Thread(target=sendMail, args=(email, name, name)).start()
+    return redirect('blog-home')
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """

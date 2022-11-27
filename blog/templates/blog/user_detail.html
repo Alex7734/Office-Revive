@@ -138,12 +138,20 @@
                                       <span aria-hidden="true">&times;</span>
                                     </button>
                                   </div>
-                                  <div class="modal-body">
+                                  <div class="modal-body container flex-row align-content-center">
                                     Would you like to invite him to a small chllange?
+                                      <br>
+
+
+                                    <form class="pb-2 pt-3 id="sendEmail" method="POST" action="{% url 'sendInvite' email=userProfile.user.email name=userProfile.user.username %}">
+                                    {% csrf_token %}
+                                    <input class="form-control form-control-lg pt-1 pb-2" placeholder="Message" type="text" required/>
+                                    </form>
                                   </div>
+
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Send invite</button>
+                                    <button type="button" class="btn btn-primary" onClick="document.getElementById('sendEmail').submit()">Send invite</button>
                                   </div>
                                 </div>
                               </div>

@@ -12,3 +12,9 @@ class NewFeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ['option', 'content']
+
+
+class NewInviteForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ["content"]

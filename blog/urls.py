@@ -9,6 +9,7 @@ from .views import (
     post_list,
     isChecked,
     appendToEvent,
+    sendInvite,
     UserDetailView,
     PeopleListView,
     FeedbackCreateView)
@@ -33,6 +34,7 @@ urlpatterns = [
     path('api/posts', post_list),
     path('isChecked', isChecked, name="isChecked"),
     path('appendToEvent/<int:pk>/', appendToEvent, name="appendToEvent"),
+    path('sendInvite/<str:email>/<str:name>/', sendInvite, name="sendInvite"),
     path('user_detail/<int:username>', UserDetailView.as_view(), name='user-detail'),
     path('leaderboard/', PeopleListView.as_view(), name='leaderboard'),
     path('feedback/', FeedbackCreateView.as_view(), name='feedback'),
