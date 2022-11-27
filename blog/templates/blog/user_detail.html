@@ -1,0 +1,196 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block content %}
+
+    <style type="text/css">
+        .btn-outline-success {
+        border-color: white;
+        color: white !important;
+        padding: 12px 80px 12px 80px;
+        font-weight: bold;
+        background-color: #198754;
+        border:0;
+        border-radius: 25px;
+    }
+    </style>
+    <div class="row">
+
+        <div class="col-12 col-md-3 pr-4 dont-move container justify-content-center">
+            <div class="text-center">
+            <h2 class="white-important">OfficeRoom</h2><br>
+            </div>
+            <br>
+            <div class="profile-section">
+            <h3 class="white-important p-2">
+                Your profile
+            </h3>
+            <article class="media content-section" style="height: 140px; width: 100%">
+                {%  if user_profile != None %}
+                    <div class="mt-2 d-flex full-width align-items-center">
+                        <img
+                           class="rounded-circle mr-3 img-fluid"
+                           style="width: 90px; height: 90px;"
+                           src="{{ user_profile.profile.image.url }}">
+                        <div>
+                            <h4 style="text-align: left"
+                                    class="white-important">
+                                {{ user_profile.username }}
+                            </h4>
+                            <h6 style="text-align: left"
+                                    class="email-profile">
+                                {{ user.email }}
+                            </h6>
+
+                        </div>
+                    </div>
+                {%  else %}
+                    <div class="mt-2 d-flex full-width align-items-center">
+                        <img
+                           class="rounded-circle mr-3"
+                           style="width: 90px; height: 90px;"
+                           src="{{ user.profile.image.url }}">
+                        <div>
+                            <h4 style="text-align: left"
+                                    class="white-important">
+                                {{ user.username }}
+                            </h4>
+                            <h6 style="text-align: left"
+                                    class="email-profile">
+                                {{ user.email }}
+                            </h6>
+                            <h6 style="text-align: left" class="email-profile">
+                                {%  if userProfile.isChecked %}
+                                Checked in for work tomorrow
+                                {% else %}
+                                Will not be at work tomorrow
+                                {% endif %}
+                            </h6>
+                        </div>
+                    </div>
+                {%  endif %}
+            </article>
+                        
+
+
+            <div class="d-flex" style="justify-content: center;">
+                <div style="margin-left: auto; margin-right:auto">
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pr-4 pl-4"onClick="document.getElementById('checkin').submit()">
+                        Check in tomorrow
+                    </a>
+                                    <form id="checkin" method="POST" action="{% url 'isChecked' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden">
+                                    </form>
+
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pr-4 pl-4" href="#">
+                        Invite {{userProfile.user.username}} to work
+                    </a>
+
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-9 pr-4 dont-move container justify-content-center">
+            <div class="text-center">
+            <h2 class="white-important">Details about {{userProfile.user.username}}</h2><br>
+            </div>
+            <br>
+            <div class="profile-section">
+            <article class="media content-section" style="height: 140px; width: 100%">
+                    <div class="mt-3 d-flex full-width align-items-center">
+                        <img
+                           class="rounded-circle mr-3"
+                           style="width: 90px; height: 90px;"
+                           src="{{ userProfile.image.url }}">
+                        <div>
+                            <h4 style="text-align: left"
+                                    class="email-profile">
+                                <b>{{ userProfile.user.username }}</b>
+                            </h4>
+                            <h6 style="text-align: left"
+                                    class="email-profile">
+                                {{ userProfile.user.email }}
+                            </h6>
+                            <h6 style="text-align: left" class="email-profile">
+                                {%  if userProfile.isChecked %}
+                                Checked in for work tomorrow
+                                {% else %}
+                                Will not be at work tomorrow
+                                {% endif %}
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex-row container full-width align-items-center">
+                        {% for hobby in userProfile.interests.all %}
+                            {% if hobby in myProfile.interests.all and userProfile != myProfile %}
+                            <btn class="btn btn-sm btn-outline-success mb-4" data-toggle="modal" data-target="#exampleModal-{{hobby}}">{{hobby}}</btn>
+                            {% else  %}
+                            <btn class="btn btn-sm btn-outline-primary mb-4">{{hobby}}</btn>
+                            {% endif %}
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal-{{hobby}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: #15202b;">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel" style="color:#15202b;">You matched an interest in {{hobby}}!</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    Would you like to invite him to a small chllange?
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary">Send invite</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+            </article>
+            <article class="media content-section">
+                <div class="row full-width pl-2">
+                    <div class="col-4">
+                           Atending events
+                    </div>
+                    <div class="col-4">
+                            Score
+                    </div>
+                    <div class="col-4">
+                        Possible score
+                    </div>
+                        <div class="col-4">
+                            <a href="#">
+                                <h3 class="white-important follow-click">
+                                   {{events_participated_in}}
+                                </h3>
+                            </a>
+                        </div>
+
+                        <div class="col-4">
+                            <a href="#">
+                                <h3 class="white-important follow-click">
+                                    {{score}}
+                                </h3>
+                            </a>
+                        </div>
+                        <div class="col-4">
+                            <a href="#">
+                                <h3 class="white-important follow-click">
+                                    {{possible_score}}
+                                </h3>
+                            </a>
+                        </div>
+                </div>
+            </article>
+            </div>
+        </div>
+
+          
+
+
+{% endblock content %}

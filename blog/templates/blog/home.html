@@ -1,298 +1,298 @@
 {% extends "blog/base.html" %}
 {% load static %}
 {% block content %}
-<div class="row">
-    <div class="col-12 col-md-3 pr-4 container justify-content-center">
-        <div class="text-center">
+    <div class="row">
+        <div class="col-12 col-md-3 pr-4 container justify-content-center">
+            <div class="text-center">
             <h2 class="white-important">OfficeRoom</h2><br>
-        </div>
-        <div class="profile-section">
-            <h3 class="white-important p-2">
+            </div>
+            <br>
+            <div class="profile-section">
+            <h3 class="white-important p-2 pl-3">
                 Profile
             </h3>
             <article class="media content-section" style="height: 140px; width: 100%">
-                {% if user_profile != None %}
-                <div class="mt-2 d-flex full-width align-items-center">
-                    <img
-                            class="rounded-circle mr-3 img-fluid"
-                            style="width: 90px; height: 90px;"
-                            src="{{ user_profile.profile.image.url }}">
-                    <div>
-                        <h4 style="text-align: left"
-                            class="white-important">
-                            {{ user_profile.username }}
-                        </h4>
-                        <h6 style="text-align: left"
-                            class="email-profile">
-                            {{ user.email }}
-                        </h6>
+                {%  if user_profile != None %}
+                    <div class="mt-2 d-flex full-width align-items-center">
+                        <img
+                           class="rounded-circle mr-3 img-fluid"
+                           style="width: 90px; height: 90px;"
+                           src="{{ user_profile.profile.image.url }}">
+                        <div>
+                            <h4 style="text-align: left"
+                                    class="white-important">
+                                {{ user_profile.username }}
+                            </h4>
+                            <h6 style="text-align: left"
+                                    class="email-profile">
+                                {{ user.email }}
+                            </h6>
 
+                        </div>
                     </div>
-                </div>
-                {% else %}
-                <div class="mt-2 d-flex full-width align-items-center">
-                    <img
-                            class="rounded-circle mr-3"
-                            style="width: 90px; height: 90px;"
-                            src="{{ user.profile.image.url }}">
-                    <div>
-                        <h4 style="text-align: left"
-                            class="white-important">
-                            {{ user.username }}
-                        </h4>
-                        <h6 style="text-align: left"
-                            class="email-profile">
-                            {{ user.email }}
-                        </h6>
-                        <h6 style="text-align: left" class="email-profile">
-                            {% if userProfile.isChecked %}
-                            Checked in for work tomorrow
-                            {% else %}
-                            Will not be at work tomorrow
-                            {% endif %}
-                        </h6>
+                {%  else %}
+                    <div class="mt-2 d-flex full-width align-items-center">
+                        <img
+                           class="rounded-circle mr-3"
+                           style="width: 90px; height: 90px;"
+                           src="{{ user.profile.image.url }}">
+                        <div>
+                            <h4 style="text-align: left"
+                                    class="white-important">
+                                {{ user.username }}
+                            </h4>
+                            <h6 style="text-align: left"
+                                    class="email-profile">
+                                {{ user.email }}
+                            </h6>
+                            <h6 style="text-align: left" class="email-profile">
+                                {%  if userProfile.isChecked %}
+                                Checked in for work tomorrow
+                                {% else %}
+                                Will not be at work tomorrow
+                                {% endif %}
+                            </h6>
+                        </div>
                     </div>
-                </div>
-                {% endif %}
+                {%  endif %}
             </article>
             <article class="media content-section">
                 <div class="row full-width pl-2">
                     <div class="col-6">
-                        Something
+                           Atending events
                     </div>
                     <div class="col-6">
-                        Another thing
+                            Score
                     </div>
-                    {% if user_profile != None %}
-                    <div class="col-6">
-                        <h3 class="white-important follow-click">
-                            <a href="#">
-                                ??
-                            </a>
-                        </h3>
-                    </div>
-                    <div class="col-6">
-                        <a href="#">
-                            <h3 class="white-important follow-click">
-                                10
-                            </h3>
-                        </a>
-                    </div>
-                    {% else %}
-                    <div class="col-6">
-                        <a href="#">
-                            <h3 class="white-important follow-click">
-                                ??
-                            </h3>
-                        </a>
-                    </div>
-
-                    <a href="#">
                         <div class="col-6">
-                            <h3 class="white-important follow-click">
-                                ???
-                            </h3>
+                            <a href="#">
+                                <h3 class="white-important follow-click">
+                                   {{events_participated_in}}
+                                </h3>
+                            </a>
                         </div>
-                    </a>
-                    {% endif %}
+
+                        <a href="#">
+                            <div class="col-6">
+                                <h3 class="white-important follow-click">
+                                    {{score}}({{possible_score}})
+                                </h3>
+                            </div>
+                        </a>
                 </div>
             </article>
+
+                        
 
 
             <div class="d-flex" style="justify-content: center;">
                 <div style="margin-left: auto; margin-right:auto">
-                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pr-4 pl-4"
-                       onClick="document.getElementById('checkin').submit()">
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pr-4 pl-4"onClick="document.getElementById('checkin').submit()">
                         Check in tomorrow
                     </a>
-                    <form id="checkin" method="POST" action="{% url 'isChecked' %}">
-                        {% csrf_token %}
-                        <input type="hidden">
-                    </form>
+                                    <form id="checkin" method="POST" action="{% url 'isChecked' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden">
+                                    </form>
                     {% if request.user.is_superuser %}
-                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pr-4 pl-4"
-                       href="{% url 'post-create' %}">
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pr-4 pl-4" href="{% url 'post-create' %}">
                         Create new event
                     </a>
+                    {% else %}
+                    <a class="btn btn-sm btn-outline-primary mb-4 mr-3 full-width pr-4 pl-4" href="{% url 'feedback' %}">Requests&Feedback</a>
                     {% endif %}
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col-12 col-md-6 scrollable">
-        <div class="full-width row">
-            <div class="col-6">
-                <h3 class="white-important mb-3">
-                    Events
-                </h3>
-            </div>
-            <div class="col-6 no-padding">
-                <h6
-                        style="position: absolute; bottom: 0; right: 0"
-                        class="white-important mb-3">
-                    {{ page_obj.start_index }} - {{ page_obj.end_index }} of
-                    {{ paginator.count }}
-                </h6>
             </div>
         </div>
+        <div class="col-12 col-md-6 scrollable" >
+            <div class="full-width row">
+                <div class="col-6">
+                    <h3 class="white-important mb-3">
+                        Events 
+                    </h3>
+                </div>
+                 <div class="col-6 no-padding">
+                    <h6
+                            style="position: absolute; bottom: 0; right: 0"
+                            class="white-important mb-3">
+                        {{ page_obj.start_index }} - {{ page_obj.end_index }} of
+                        {{ paginator.count }}
+                    </h6>
+                </div>
+            </div>
 
-        {% for post in posts %}
-        <article class="media content-section hovered-tweet">
-            <div style="width: 100%; word-break: break-all;">
+            {% for post in posts %}
+                <article class="media content-section hovered-tweet">
+                <div style="width: 100%; word-break: break-all;">
 
-                <div class="pb-2 row m-0" style="width: 100%; margin-right: 0 !important;">
+                    <div class="pb-2 row m-0" style="width: 100%; margin-right: 0 !important;">
+                       <div
+                               style="padding-left: 0px !important;"
+                               class="col-8 no-padding d-flex align-items-center">
+                           <img
+                               class="rounded-circle mr-2"
+                               style="width: 20px; height: 20px;"
+                               src="{{ post.author.profile.image.url }}">
+                           <a class="mr-2 white-important" href="{% url 'user-detail' post.author.id %}">
+                               {{ post.author }}
+                           </a>
+                           added a new {{post.interest}} event
+                       </div>
+                       <div class="col-4 d-flex flex-row-reverse no-padding align-items-center"
+                            style="padding-right: 0 !important;">
+                           {% if post.author == user %}
+                                <a class="material-icons ml-2"
+                                   style="font-size: 14px"
+                                        href="{% url 'post-delete' post.id %}">clear</a>
+                                <a class="material-icons ml-2"
+                                   style="font-size: 14px"
+                                        href="{% url 'post-update' post.id %}">update</a>
+                            {%  endif %}
+                       </div>
+                   </div>
                     <div
-                            style="padding-left: 0px !important;"
-                            class="col-8 no-padding d-flex align-items-center">
-                        <img
-                                class="rounded-circle mr-2"
-                                style="width: 20px; height: 20px;"
-                                src="{{ post.author.profile.image.url }}">
-                        <a class="mr-2 white-important" href="{% url 'user-posts' post.author %}">
-                            {{ post.author }}
-                        </a>
-                    </div>
-                    <div class="col-4 d-flex flex-row-reverse no-padding align-items-center"
-                         style="padding-right: 0 !important;">
-                        {% if post.author == user %}
-                        <a class="material-icons ml-2"
-                           style="font-size: 14px"
-                           href="{% url 'post-delete' post.id %}">clear</a>
-                        <a class="material-icons ml-2"
-                           style="font-size: 14px"
-                           href="{% url 'post-update' post.id %}">update</a>
-                        {% endif %}
-                    </div>
-                </div>
-                <div
-                        class="mb-2"
-                        style="width: 100%; height: 1px; background-color: rgba(255, 255, 255, 0.1)"></div>
-                <a
-                        style="color: rgba(255, 255, 255, 0.5) !important;"
-                        href="{% url 'post-detail' post.id %}">
-                    <p class="mb-4">
-                        {{ post.content }}
-                    </p>
-                </a>
-
-                <div class="row">
-                    <div class="col-6" style="display: flex;">
-                        <small style="opacity: 0.4;">
-
-                            <a href="#" onClick="document.getElementById('likebutton-{{post.id}}').submit()"><i
-                                    class="fas fa-thumbs-up"></i> Coming ({{post.participants.count }})</a>
-
-
-                            <form id="likebutton-{{post.id}}" method="POST" action="{% url 'appendToEvent' post.id %}">
-                                {% csrf_token %}
-                                <input type="hidden">
-                            </form>
-
-
-                        </small>
-                        <small style="opacity: 0.4; margin-left:15px;">
-                            <a href="/post/{{post.id}}/">
-                                <i style=" font-size: 16px;" class="far fa-comment"></i> {{ post.number_of_comments }}
-                                comment(s)
-                            </a>
-
-                        </small>
-                    </div>
-                    <div class="col-6">
-                        <small
-                                style="opacity: 0.4;"
-                                class="white-important d-flex full-width flex-row-reverse">
-                            {{ post.date_posted | date:"H:i l, d.m.y" }}
-                        </small>
-                    </div>
-                </div>
-
-            </div>
-        </article>
-        {% endfor %}
-
-        <div class="full-width d-flex justify-content-center">
-            {% if is_paginated %}
-            {% if page_obj.has_previous %}
-            <a class="btn btn-sm btn-outline-secondary mb-4 mr-2"
-               href="?page=1">First</a>
-            <a class="btn btn-sm btn-outline-secondary mb-4 mr-2"
-               href="?page={{ page_obj.previous_page_number }}">Previous</a>
-            {% endif %}
-
-            {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-            <a class="btn btn-sm btn-info mb-4 mr-2"
-               href="?page={{ num }}">{{ num }}</a>
-            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-            <a class="btn btn-sm btn-outline-secondary mb-4 mr-2"
-               href="?page={{ num }}">{{ num }}</a>
-            {% endif %}
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-            <a class="btn btn-sm btn-outline-secondary mb-4 mr-2"
-               href="?page={{ page_obj.next_page_number }}">Next</a>
-            <a class="btn btn-sm btn-outline-secondary mb-4 mr-2"
-               href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-            {% endif %}
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="col-12 col-md-3">
-        <form class="pb-4" action="{% url 'search' %}" method="post">{% csrf_token %}
-            <div class="search-container container align-content-center flex-row">
-                <div class="search">
-                    <input required name="search" type="text" id="zip-code-input" placeholder="Search People">
-                    <button type="submit" style="border:0; background: transparent;"><i class="fa fa-search"></i>
-                    </button>
+                            class="mb-2"
+                            style="width: 100%; height: 1px; background-color: rgba(255, 255, 255, 0.1)"></div>
+                    <a
+                            style="color: rgba(255, 255, 255, 0.5) !important;"
+                            href="{% url 'post-detail' post.id %}">
+                        <p class="mb-4">
+                            {{ post.content }}
+                        </p>
                     </a>
-        </form>
-    </div>
-</div>
 
-{%  if user_profile is None %}
+                        <div class="row">
+                            <div class="col-6" style="display: flex;">
+                                {% if post in events %}
+                                <small style="opacity: 1;">
 
-<article class="t-section media content-section">
+                                    <a href="#" onClick="document.getElementById('likebutton-{{post.id}}').submit()"><i class="fas fa-thumbs-up"></i> Coming ({{post.participants.count }}) </a>
+                        
 
-    <div class="row ">
-        <div class="col-12">
-            <h3 class="white-important p-2 pl-3">Checked in for tomorrow</h3>
-        </div>
-        <ul class="col-12 mt-2">
-            {% for user in checked_in_users %}
-            <li>
-                <div class="who-to-follow">
+                                    <form id="likebutton-{{post.id}}" method="POST" action="{% url 'appendToEvent' post.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden">
+                                    </form>
 
-                    <div
-                            style="padding-left: 0px !important;"
-                            class="col-8 no-padding d-flex align-items-center">
-                        <img
-                                class="rounded-circle mr-2"
-                                style="width: 20px; height: 20px;"
-                                src="{{ user.image.url }}">
-                        <a class="mr-2 white-important" href="">
-                            {{ user.user.username }}
-                        </a>
-                    </div>
-                    <p>{{ user.user.email }}</p>
+
+                                </small>
+                                {% else %}
+                                    <small style="opacity: 0.4;">
+
+                                    <a href="#" onClick="document.getElementById('likebutton-{{post.id}}').submit()"><i class="fas fa-thumbs-up"></i> Coming ({{post.participants.count }}) </a>
+                        
+
+                                    <form id="likebutton-{{post.id}}" method="POST" action="{% url 'appendToEvent' post.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden">
+                                    </form>
+
+
+                                </small>
+                                {% endif %}
+
+                                <small style="opacity: 0.4; margin-left:15px;">
+                                    <a href="/post/{{post.id}}/">
+                                        <i style=" font-size: 16px;" class="far fa-comment"></i> {{ post.number_of_comments }} comment(s)
+                                    </a>
+
+                                </small>
+                            </div>
+                            <div class="col-6">
+                                <small
+                                        style="opacity: 0.4;"
+                                    class="white-important d-flex full-width flex-row-reverse">
+                                    {{ post.date_posted | date:"H:i l, d.m.y" }}
+                                </small>
+                            </div>
+                            <div class="col-1">
+                        </div>
+
                 </div>
-            </li>
+                </article>
             {% endfor %}
-        </ul>
 
+            <div class="full-width d-flex justify-content-center">
+                {% if is_paginated %}
+                    {% if page_obj.has_previous %}
+                        <a class="btn btn-sm btn-outline-secondary mb-4 mr-2"
+                                href="?page=1">First</a>
+                        <a class="btn btn-sm btn-outline-secondary mb-4 mr-2"
+                                href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <a class="btn btn-sm btn-info mb-4 mr-2"
+                                href="?page={{ num }}">{{ num }}</a>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <a class="btn btn-sm btn-outline-secondary mb-4 mr-2"
+                                href="?page={{ num }}">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a class="btn btn-sm btn-outline-secondary mb-4 mr-2"
+                                href="?page={{ page_obj.next_page_number }}">Next</a>
+                           <a class="btn btn-sm btn-outline-secondary mb-4 mr-2"
+                            href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 col-md-3">
+            <form class ="pb-4" action="{% url 'search' %}" method="post">{% csrf_token %}
+                <div class="search-container container align-content-center flex-row">
+                    <div class="search">
+                    <input required name="search" type="text" id="zip-code-input" placeholder="Search People">
+                    <button type="submit" style="border:0; background: transparent;"><i class="fa fa-search"></i> </button> </a>
+                </form>
+              </div>
+            </div>
+
+                {%  if user_profile is None %}
+
+                <article class="t-section media content-section">
+
+                    <div class="row ">
+                        <div class="col-12">
+                            <h3 class="white-important p-2 pl-3">Checked in for tomorrow</h3>
+                        </div>
+                        <ul class="col-12 mt-2">
+                            {% for user in checked_in_users %}
+                                <li>
+                                    <div class="who-to-follow">
+
+                                        <div
+                                               style="padding-left: 0px !important;"
+                                               class="col-8 no-padding d-flex align-items-center">
+                                           <img
+                                               class="rounded-circle mr-2"
+                                               style="width: 20px; height: 20px;"
+                                               src="{{ user.image.url }}">
+                                           <a class="mr-2 white-important" href="{% url 'user-detail' user.user.id %}">
+                                               {{ user.user.username }}
+                                           </a>
+                                       </div>
+                                        <p>{{ user.user.email }}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
+
+                </article>
+                {% endif %}
+                <p><a href="">Terms</a>,
+<a href="">Privacy policy</a>,
+<a href="">Cookies</a>,
+<a href="">Ads info</a>,
+<a href="">More</a>
+© 2022 OfficeRoom, Inc.</p>
+
+        </div>
     </div>
-
-</article>
-{% endif %}
-<p><a href="">Terms</a>,
-    <a href="">Privacy policy</a>,
-    <a href="">Cookies</a>,
-    <a href="">Ads info</a>,
-    <a href="">More</a>
-    © 2022 OfficeRoom, Inc.</p>
-
-</div>
-</div>
 {% endblock content %}

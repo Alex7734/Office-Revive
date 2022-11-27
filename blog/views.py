@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from blog.models import Post, Comment
+from blog.models import Post, Comment, Feedback
 from users.models import Profile
 import sys
 from django.contrib import messages
@@ -15,19 +15,63 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import api_view
 from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser
+from rest_framework.parsers import JSONParser 
 from rest_framework import status
 import smtplib, ssl
 from threading import Thread
-
 
 def is_users(post_user, logged_user):
     return post_user == logged_user
 
 
+def sendMail(userEmail, userName, eventName):
+    port = 587
+    smtp_server = "smtp.gmail.com"
+    sender_email = "officeroomg1s1y1@gmail.com"
+    password = 'hqkarbgcagncvnuy'
+    message = f"""\
+Subject: Event Notification
+Hi, {userName.capitalize()}!
+This is an automatically generated message to inform you about your attendance at {eventName}."""
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.ehlo()
+        server.starttls(context=context)
+        server.ehlo()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, userEmail, message)
+
+
 PAGINATION_COUNT = 3
 
+#Leaderboard
+class PeopleListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'blog/leaderboard.html'
+    context_object_name = 'user'
+    ordering = ["-score"]
+    paginate_by = PAGINATION_COUNT
 
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        all_users = Profile.objects.all().order_by('-score')
+        userProfile = Profile.objects.get(user=self.request.user)
+
+        data['userProfile'] = Profile.objects.get(user=self.request.user) 
+        data['all_users'] = all_users
+        data['events_participated_in'] = Post.objects.filter(participants=userProfile).count()
+        events_participated_in = Post.objects.filter(participants=userProfile).all()
+        data['score'] = userProfile.score
+        data['possible_score'] = userProfile.score + sum([event.score for event in events_participated_in])
+        return data
+
+    def get_queryset(self):
+        return Post.objects.all().order_by('date_posted')
+
+#Home 
 class PostListView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'blog/home.html'
@@ -35,19 +79,49 @@ class PostListView(LoginRequiredMixin, ListView):
     ordering = ['-date_posted']
     paginate_by = PAGINATION_COUNT
 
+
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
 
         all_users = Profile.objects.all()
         checked_in_users = Profile.objects.filter(isChecked=True)
+        userProfile = Profile.objects.get(user=self.request.user)
 
-        data['userProfile'] = Profile.objects.get(user=self.request.user)
+        data['userProfile'] = Profile.objects.get(user=self.request.user) 
         data['all_users'] = all_users
         data['checked_in_users'] = checked_in_users
+        data['events_participated_in'] = Post.objects.filter(participants=userProfile).count()
+        events_participated_in = Post.objects.filter(participants=userProfile).all()
+        data['score'] = userProfile.score
+        data['possible_score'] = userProfile.score + sum([event.score for event in events_participated_in])
+        data['events'] = events_participated_in
+        return data
+
+    def get_queFryset(self):
+        return Post.objects.all().order_by('date_posted')
+
+#Profile page
+class UserDetailView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'blog/user_detail.html'
+    context_object_name = 'details'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        userProfile = Profile.objects.get(user=username)
+        data['myProfile'] = Profile.objects.get(user=self.request.user)
+        data['userProfile'] = userProfile
+        data['events_participated_in'] = Post.objects.filter(participants=username).count()
+        events_participated_in = Post.objects.filter(participants=userProfile).all()
+        data['interests'] = userProfile.interests.all()
+        data['score'] = userProfile.score
+        data['possible_score'] = sum([event.score for event in events_participated_in])
         return data
 
     def get_queryset(self):
         return Post.objects.all().order_by('date_posted')
+
 
 
 class UserPostListView(LoginRequiredMixin, ListView):
@@ -58,6 +132,7 @@ class UserPostListView(LoginRequiredMixin, ListView):
 
     def visible_user(self):
         return get_object_or_404(User, username=self.kwargs.get('username'))
+
 
     def get_queryset(self):
         user = self.visible_user()
@@ -74,8 +149,6 @@ class PostDetailView(DetailView):
         comments_connected = Comment.objects.filter(post_connected=self.get_object()).order_by('-date_posted')
         data['comments'] = comments_connected
         data['form'] = NewCommentForm(instance=self.request.user)
-        #profile in post.participants.all()
-
         return data
 
     def post(self, request, *args, **kwargs):
@@ -99,7 +172,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['content', 'date_posted', 'score']
+    fields = ['name','content', 'date_posted', 'score']
     template_name = 'blog/post_new.html'
     success_url = '/'
 
@@ -110,6 +183,22 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['tag_line'] = 'Add an event'
+        return data
+
+class FeedbackCreateView(LoginRequiredMixin, CreateView):
+    model = Feedback
+    fields = ['type', 'content']
+    template_name = 'blog/feedback.html'
+    success_url = '/'
+    fields = ['option', 'content']
+
+    def form_valid(self):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['tag_line'] = 'Requests & Feedback'
         return data
 
 
@@ -135,7 +224,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 @login_required
 def isChecked(request):
     if request.method == "POST":
-        userProfile = Profile.objects.get(user=request.user)
+        userProfile = Profile.objects.get(user=request.user) 
         userProfile.isChecked = not (userProfile.isChecked)
         userProfile.save()
         if userProfile.isChecked:
@@ -143,27 +232,6 @@ def isChecked(request):
         else:
             messages.success(request, f'Checked out of work!')
     return redirect('blog-home')
-
-
-def sendMail(userEmail, userName, eventName):
-    port = 587
-    smtp_server = "smtp.gmail.com"
-    sender_email = "officeroomg1s1y1@gmail.com"
-    password = 'hqkarbgcagncvnuy'
-    message = f"""\
-Subject: Event Notification
-
-Hi, {userName.capitalize()}!
-This is an automatically generated message to inform you about your attendance at {eventName}."""
-
-    context = ssl.create_default_context()
-    with smtplib.SMTP(smtp_server, port) as server:
-        server.ehlo()
-        server.starttls(context=context)
-        server.ehlo()
-        server.login(sender_email, password)
-        server.sendmail(sender_email, userEmail, message)
-
 
 @login_required
 def appendToEvent(request, pk):
@@ -173,13 +241,14 @@ def appendToEvent(request, pk):
         profile = Profile.objects.get(user=request.user)
         if not (profile in post.participants.all()):
             post.participants.add(profile)
-            messages.success(request, f"adding {profile} to {post} {pk}")
             Thread(target=sendMail, args=(request.user.email, request.user.username, post.name)).start()
+            messages.success(request,f"Registered to the event")
         else:
             post.participants.remove(profile)
-            messages.success(request, f"removing {profile} to {post} {pk}")
+            messages.success(request,f"Sorry you could not make it :(")
         post.save()
     return redirect('blog-home')
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -200,28 +269,29 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+
 @api_view(['GET', 'POST', 'DELETE'])
 def post_list(request):
     if request.method == 'GET':
         posts = Post.objects.all()
-
+        
         title = request.query_params.get('title', None)
         if title is not None:
             posts = posts.filter(title__icontains=title)
-
+        
         posts_serializer = PostSerializer(posts, many=True)
         return JsonResponse(posts_serializer.data, safe=False)
         # 'safe=False' for objects serialization
-
+ 
     elif request.method == 'POST':
         post_data = JSONParser().parse(request)
         post_serializer = PostSerializer(data=post_data)
         if post_serializer.is_valid():
             post_serializer.save()
-            return JsonResponse(post_serializer.data, status=status.HTTP_201_CREATED)
+            return JsonResponse(post_serializer.data, status=status.HTTP_201_CREATED) 
         return JsonResponse(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
     elif request.method == 'DELETE':
         count = Post.objects.all().delete()
-        return JsonResponse({'message': '{} Posts were deleted successfully!'.format(count[0])},
-                            status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse({'message': '{} Posts were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
+ 

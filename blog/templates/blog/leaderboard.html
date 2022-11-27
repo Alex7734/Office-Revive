@@ -1,0 +1,109 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block content %}
+	
+	<div class="row">
+        <div class="col-4 col-md-4 pr-4 dont-move container justify-content-center">
+            <div class="text-center">
+            <h2 class="white-important"></h2><br>
+            </div>
+            <br>
+            <div class="profile-section">
+            <article class="media content-section" style="height: 140px; width: 100%">
+                    <div class="mt-3 d-flex full-width align-items-center">
+                        <img
+                           class="rounded-circle mr-3"
+                           style="width: 90px; height: 90px;"
+                           src="{{ userProfile.image.url }}">
+                        <div>
+                            <h4 style="text-align: left"
+                                    class="email-profile">
+                                <b>{{ userProfile.user.username }}</b>
+                            </h4>
+                            <h6 style="text-align: left"
+                                    class="email-profile">
+                                {{ userProfile.user.email }}
+                            </h6>
+                            <h6 style="text-align: left" class="email-profile">
+                                {%  if userProfile.isChecked %}
+                                Checked in for work tomorrow
+                                {% else %}
+                                Will not be at work tomorrow
+                                {% endif %}
+                            </h6>
+                        </div>
+                    </div>
+            </article>
+            <article class="media content-section">
+                <div class="row full-width pl-2">
+                    <div class="col-4">
+                           Atending events
+                    </div>
+                    <div class="col-4">
+                            Score
+                    </div>
+                    <div class="col-4">
+                        Possible score
+                    </div>
+                        <div class="col-4">
+                            <a href="#">
+                                <h3 class="white-important follow-click">
+                                   {{events_participated_in}}
+                                </h3>
+                            </a>
+                        </div>
+
+                        <div class="col-4">
+                            <a href="#">
+                                <h3 class="white-important follow-click">
+                                    {{score}}
+                                </h3>
+                            </a>
+                        </div>
+                        <div class="col-4">
+                            <a href="#">
+                                <h3 class="white-important follow-click">
+                                    {{possible_score}}
+                                </h3>
+                            </a>
+                        </div>
+                </div>
+            </article>
+            </div>
+        </div>
+        <div class="col-md-8 mt-4 pr-4 dont-move container">
+        	<h2 class="white-important">Top engagement</h2><br>
+        	<table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">score</th>
+			      <th scope="col">username</th>
+			      <th scope="col">email</th>
+			      <th scope="col">events attended</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <th scope="row">1350</th>
+			      <td>Alex-Mihoc</td>
+			      <td>alexmihoc@rotaract.ro</td>
+			      <td>14</td>
+			    </tr>
+			    <tr>
+			      <th scope="row">1150</th>
+			      <td>Jacob-Doe</td>
+			      <td>jacobdoe@osut.org</td>
+			      <td>33</td>
+			    </tr>
+			    <tr>
+			      <th scope="row">390</th>
+			      <td>Jhon-Doe</td>
+			      <td>JhonDoe@harasighisoara.ro</td>
+			      <td>14</td>
+			    </tr>
+			  </tbody>
+			</table>
+        </div>
+    </div>
+
+{% endblock content %}

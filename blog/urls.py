@@ -8,14 +8,18 @@ from .views import (
     UserPostListView,
     post_list,
     isChecked,
-    appendToEvent)
-from . import views
+    appendToEvent,
+    UserDetailView,
+    PeopleListView,
+    FeedbackCreateView)
+from .import views
 from django.urls import include
 from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
+
 
 urlpatterns = [
     path('', PostListView.as_view(), name='blog-home'),
@@ -28,6 +32,8 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/posts', post_list),
     path('isChecked', isChecked, name="isChecked"),
-    path('appendToEvent/<int:pk>/', appendToEvent, name="appendToEvent")
-
+    path('appendToEvent/<int:pk>/', appendToEvent, name="appendToEvent"),
+    path('user_detail/<int:username>', UserDetailView.as_view(), name='user-detail'),
+    path('leaderboard/', PeopleListView.as_view(), name='leaderboard'),
+    path('feedback/', FeedbackCreateView.as_view(), name='feedback'),
 ]
