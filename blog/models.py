@@ -6,6 +6,7 @@ from users.models import Profile, Interests
 
 
 class Post(models.Model):
+    name = models.TextField(max_length=512, default="")
     content = models.TextField(max_length=1000)
     date_posted = models.DateTimeField(default=timezone.now())
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -34,4 +35,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return str(self.author) + " " + str(self.content)
-
