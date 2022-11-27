@@ -17,6 +17,8 @@ from rest_framework.decorators import api_view
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from rest_framework import status
+import smtplib, ssl
+from threading import Thread
 
 
 def is_users(post_user, logged_user):
@@ -142,6 +144,26 @@ def isChecked(request):
     return redirect('blog-home')
 
 
+def sendMail(userEmail, userName, eventName):
+    port = 587
+    smtp_server = "smtp.gmail.com"
+    sender_email = "officeroomg1s1y1@gmail.com"
+    password = 'hqkarbgcagncvnuy'
+    message = f"""\
+Subject: Event Notification
+
+Hi, {userName.capitalize()}!
+This is an automatically generated message to inform you about your attendance at {eventName}."""
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.ehlo()
+        server.starttls(context=context)
+        server.ehlo()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, userEmail, message)
+
+
 @login_required
 def appendToEvent(request, pk):
     if request.method == "POST":
@@ -151,6 +173,7 @@ def appendToEvent(request, pk):
         if not (profile in post.participants.all()):
             post.participants.add(profile)
             messages.success(request, f"adding {profile} to {post} {pk}")
+            Thread(target=sendMail, args=(request.user.email, request.user.username, post.name)).start()
         else:
             post.participants.remove(profile)
             messages.success(request, f"removing {profile} to {post} {pk}")

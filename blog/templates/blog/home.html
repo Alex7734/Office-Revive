@@ -2,11 +2,10 @@
 {% load static %}
 {% block content %}
 <div class="row">
-    <div class="col-12 col-md-3 pr-4 dont-move container justify-content-center">
+    <div class="col-12 col-md-3 pr-4 container justify-content-center">
         <div class="text-center">
             <h2 class="white-important">OfficeRoom</h2><br>
         </div>
-        <br>
         <div class="profile-section">
             <h3 class="white-important p-2">
                 Profile
@@ -181,7 +180,7 @@
                         <small style="opacity: 0.4;">
 
                             <a href="#" onClick="document.getElementById('likebutton-{{post.id}}').submit()"><i
-                                    class="fas fa-thumbs-up"></i> Comming ({{post.participants.count }}) </a>
+                                    class="fas fa-thumbs-up"></i> Coming ({{post.participants.count }}) </a>
 
 
                             <form id="likebutton-{{post.id}}" method="POST" action="{% url 'appendToEvent' post.id %}">
