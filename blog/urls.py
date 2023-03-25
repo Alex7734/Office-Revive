@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    DashboardView,
     PostListView,
     PostDetailView,
     PostCreateView,
@@ -36,4 +37,6 @@ urlpatterns = [
     path('user_detail/<int:username>', UserDetailView.as_view(), name='user-detail'),
     path('leaderboard/', PeopleListView.as_view(), name='leaderboard'),
     path('feedback/', FeedbackCreateView.as_view(), name='feedback'),
+    path('dashboard/', DashboardView.as_view(), name='blog-dashboard'),
+
 ]
