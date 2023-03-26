@@ -72,6 +72,34 @@ class PeopleListView(LoginRequiredMixin, ListView):
         return Post.objects.all().order_by('date_posted')
 
 
+#Event
+class EventView(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'blog/event.html'
+    context_object_name = 'posts'
+    ordering = ['date_posted']
+    paginate_by = PAGINATION_COUNT
+
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        all_users = Profile.objects.all()
+        checked_in_users = Profile.objects.filter(isChecked=True)
+        userProfile = Profile.objects.get(user=self.request.user)
+
+        data['userProfile'] = Profile.objects.get(user=self.request.user) 
+        data['all_users'] = all_users
+        data['checked_in_users'] = checked_in_users
+        data['events_participated_in'] = Post.objects.filter(participants=userProfile).count()
+        events_participated_in = Post.objects.filter(participants=userProfile).all()
+        data['score'] = userProfile.score
+        data['possible_score'] = userProfile.score + sum([event.score for event in events_participated_in])
+        data['events'] = events_participated_in
+        return data
+
+    def get_queFryset(self):
+        return Post.objects.all().order_by('date_posted')
 
 #Home 
 class PostListView(LoginRequiredMixin, ListView):
