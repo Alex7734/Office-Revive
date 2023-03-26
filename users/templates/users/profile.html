@@ -8,8 +8,8 @@
     <form class="col-6 no-padding" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <fieldset class="form-group">
-            {{ uform | crispy }}
-            {{ pform | crispy }}
+            {{ uform  }}
+            {{ pform }}
         </fieldset>
         <div class="form-group">
             <button class="btn btn-outline-primary" type="submit">Change data</button>

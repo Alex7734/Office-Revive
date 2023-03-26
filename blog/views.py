@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from blog.models import Post, Comment, Feedback
 from users.models import Profile
-import sys
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -99,6 +98,12 @@ class PostListView(LoginRequiredMixin, ListView):
 
     def get_queFryset(self):
         return Post.objects.all().order_by('date_posted')
+
+class PWA_event_view(ListView):
+    model = User
+    template_name = 'blog/pwa_post.html'
+    context_object_name = 'details'
+
 
 #Profile page
 class UserDetailView(LoginRequiredMixin, ListView):
