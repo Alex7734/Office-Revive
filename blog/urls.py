@@ -39,4 +39,5 @@ urlpatterns = [
     path('feedback/', FeedbackCreateView.as_view(), name='feedback'),
     path('dashboard/', DashboardView.as_view(), name='blog-dashboard'),
 
+
 ]

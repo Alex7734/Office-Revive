@@ -131,6 +131,7 @@ class DashboardView(LoginRequiredMixin, ListView):
     def get_queFryset(self):
         return Post.objects.all().order_by('date_posted')
 
+
 #Profile page
 class UserDetailView(LoginRequiredMixin, ListView):
     model = User
