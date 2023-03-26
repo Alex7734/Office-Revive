@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
-    PWA_event_view,
+    DashboardView,
+    EventView,
     PostListView,
     PostDetailView,
     PostCreateView,
@@ -37,5 +38,5 @@ urlpatterns = [
     path('user_detail/<int:username>', UserDetailView.as_view(), name='user-detail'),
     path('leaderboard/', PeopleListView.as_view(), name='leaderboard'),
     path('feedback/', FeedbackCreateView.as_view(), name='feedback'),
-    path('pwa_post/', PWA_event_view.as_view(), name="pwaPost")
+    path('event/', EventView.as_view(), name='blog-event'),
 ]
