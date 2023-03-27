@@ -1,6 +1,6 @@
 env
 blog/__pycache__
-django_projec/__pycache__
+django_project/__pycache__
 users/__pycache__
 users/migrations
 blog/migrations
