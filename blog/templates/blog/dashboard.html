@@ -11,7 +11,7 @@
     <form method="POST" class="col-12 col-md-6 no-padding pr-3 pr-md-0 container flex-row align-content-center">
         {% csrf_token %}
         <fieldset class="form-group  pb-3">
-            {{ form}}
+            {{ form|crispy }}
         </fieldset>
         <div class="form-group container align-content-center flex-row">
             <button class="btn btn-outline-primary full-width" type="submit">Submit</button>
