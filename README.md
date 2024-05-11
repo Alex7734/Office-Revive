@@ -1,3 +1,3 @@
-# InnoLabs
+# Innovation Labs App
 
-Hackaton app
+Hackaton app put toghether in a night!
